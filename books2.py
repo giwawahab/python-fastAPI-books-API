@@ -10,13 +10,15 @@ class Book:
     author: str
     description: str
     rating: int
+    published_date: int
 
-    def __init__(self, id, title, author, description, rating):
+    def __init__(self, id, title, author, description, rating, published_date):
         self.id = id
         self.title = title
         self.author = author
         self.description = description
         self.rating = rating
+        self.published_date = published_date
 
 
 class BookRequest(BaseModel):
@@ -25,6 +27,7 @@ class BookRequest(BaseModel):
     author: str = Field(min_length=1)
     description: str = Field(min_length=1, max_length=100)
     rating: int = Field(gt=0, lt=6)
+    published_date: int = Field(gt=1999, lt=2031)
 
     model_config = {
         "json_schema_extra": {
@@ -32,19 +35,20 @@ class BookRequest(BaseModel):
                 "title": "A new book",
                 "author": "Olamide Adebayo",
                 "description": "A new description of a book",
-                "rating": 5
+                "rating": 5,
+                "published_date": 2026
             }
         }
     }
 
 
 BOOKS = [
-    Book(1, "Computer Science", "Giwa Wahab", "Introduction to Computing", 5),
-    Book(2, "General Studies", "Tommy Soft", "General Knowledge", 3),
-    Book(3, "Engineering Basics", "Giwa Wahab", "Engineering for Beginners", 4),
-    Book(4, "Music Intro", "Micheal Jackson", "Advance Music Studies", 4),
-    Book(5, "Biology of Plant", "Ben Perez", "Plant Anatomy", 3),
-    Book(6, "Artificial Intelligence", "Alao Tomiwa", "Beginner to Advance AI Knowledge", 5)
+    Book(1, "Computer Science", "Giwa Wahab", "Introduction to Computing", 5, 2020),
+    Book(2, "General Studies", "Tommy Soft", "General Knowledge", 3, 2019),
+    Book(3, "Engineering Basics", "Giwa Wahab", "Engineering for Beginners", 4, 2016),
+    Book(4, "Music Intro", "Micheal Jackson", "Advance Music Studies", 4, 2025),
+    Book(5, "Biology of Plant", "Ben Perez", "Plant Anatomy", 3, 2024),
+    Book(6, "Artificial Intelligence", "Alao Tomiwa", "Beginner to Advance AI Knowledge", 5, 2021)
 ]
 
 
@@ -69,6 +73,15 @@ async def read_book_by_rating(book_rating: int):
     books_to_return = []
     for book in BOOKS:
         if book.rating == book_rating:
+            books_to_return.append(book)
+    return books_to_return
+
+
+@app.get("/books/publish/")
+async def read_books_by_publish_date(published_date: int):
+    books_to_return = []
+    for book in BOOKS:
+        if book.published_date == published_date:
             books_to_return.append(book)
     return books_to_return
 
