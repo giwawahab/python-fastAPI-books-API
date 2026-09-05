@@ -53,6 +53,12 @@ BOOKS = [
 ]
 
 
+@app.get("/", status_code=status.HTTP_200_OK)
+async def home_page():
+    return {"status": 200, "message": "welcome to the home page"}
+
+
+
 @app.get("/books", status_code=status.HTTP_200_OK)
 async def read_all_books():
     return BOOKS
@@ -118,5 +124,4 @@ def find_book_id(book: Book):
         book.id = BOOKS[-1].id + 1
     else:
         book.id = 1
-
     return book
